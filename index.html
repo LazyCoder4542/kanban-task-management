@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/build/index.css">
+<script src="https://kit.fontawesome.com/78f3f8b5a1.js" crossorigin="anonymous"></script>
+<script src="./js/index.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans&display=swap');
+</style>
+<title>Kanban</title>
+</head>
+<body  id="body" class="box-border m-0 p-0 font-semibold relative bg-[#ffffff] dark:bg-[#2b2c37]">
+  <!-- STYLE SHEET -->
+
+  <style>
+  .open {
+    display: block;
+  }
+  .close {
+    display: none;
+  }
+  #sidebar {
+    width: 300px;
+    height: 100%;
+    position: fixed;
+    z-index: 1000;
+  }
+  #sidebar ul li:hover {
+    border-top-right-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+    background-color: #ffffff;
+  }
+  
+  #side-open-btn {
+    border-top-right-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+    top: 85vh;
+}
+  .side {
+    height: 100%;
+    padding-right: 24px;
+  }
+  .side-down h3:hover {
+    border-top-right-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+    background-color: #ffffff;
+  }
+  header {
+    border-bottom-width: 1.8px;
+    border-color: #828fa3;
+  }
+  #dot-menu {
+    top: 5.75rem;
+  }
+  #dot-board {
+    top: 5rem;
+    right: -4rem;
+  }
+  #add-task-container {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, .5);
+  }
+  #add-task {
+    width: min(30rem, 80%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  #add-board-container,
+  #task-details-container {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, .5);
+  }
+  #add-board,
+  #task-details {
+    width: min(30rem, 80%);
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+  }
+  header section, .sidebar-logo {
+    width: 100%;
+    height: 96.95px;
+  }
+  #task-board {
+    min-height: 84.5vh;
+  }
+  .new-column {
+    width: 17.5rem;
+    height: 450px;
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+    padding-bottom: 1rem;
+    flex-shrink: 0;
+  }
+  .new-column button {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+  }
+  .task-board {
+    display: none;
+  }
+  .board-title--active {
+    background-color: #635fcf;
+    border-top-right-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+    color: #ffffff;
+  }
+  .task-board--active {
+    display: flex;
+  }
+
+  @media (max-width: 1080px) {
+    header section {
+      width: 100%;
+      height: 80.95px;
+    }
+    #sidebar {
+      width: 259px;
+    }
+    /*#task-board {
+      margin-left: 259px;
+    }*/
+  }
+
+  @media (max-width: 720px) {
+    #sidebar {
+      width: 100%;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, .5);
+      position: absolute;
+    }
+    .side {
+      width: min(264px, 90%);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+  </style>
+
+
+  <!-- SIDEBAR MENU -->
+
+  <aside id="sidebar" class="bg-[#ffffff] dark:bg-[#2b2c37] border-r-[1.8px] border-[#828fa3] border-opacity-20">
+    <div class="side text-[#828fa3] flex flex-col justify-between">
+      <div class="">
+        <div class=" flex justify-center items-center sidebar-logo px-6 py-3">
+          <div>
+            <img src="./img/kanban-logo.svg" alt="">
+          </div>
+        </div>
+        <h2 id="boards" class="py-3 px-6 text-sm tracking-[0.3em]">ALL BOARDS (<span>0</span>)
+        </h2>
+        <ul id="board-list">
+        </ul>
+        <li id="add-board-btn" class="text-[#635fcf] rounded-r-full flex items-center px-6 py-3 cursor-pointer">
+          <div class="mr-2">
+            <img src="./img/icon-board.53d57c07.svg" alt="" class="">
+          </div>
+          <h3>+Create New Board</h3>
+        </li>
+      </div>
+      <div class="side-down">
+        <div class="px-6">
+          <div class="flex items-center justify-between bg-[#20212c dark:bg-[#20212c] px-3 py-3 rounded-md">
+            <i class="fa-solid fa-sun" style="color: #828fa3; font-size: x-large;"></i>
+            <i class="fa-solid fa-toggle-on cursor-pointer" style="color: #635fcf; font-size: xx-large;"></i>
+            <i class="fa-solid fa-moon" style="color: #828fa3; font-size: x-large;"></i>
+          </div>
+        </div>
+        <div id="side-close-btn" class="py-2">
+          <h3
+            class="text-[#828fa3] font-semibold px-6 py-3 rounded-r-full cursor-pointer hover:text-[#635fcf]">
+            <i class="fa-regular fa-eye-slash" style="color: #828fa3;"></i> Hide Sidebar
+          </h3>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+
+  <!-- ADD NEW BOARD -->
+
+  <section id="add-board-container" class="absolute z-[1000] hidden">
+    <div id="add-board" class="bg-[#ffffff] dark:bg-[#2b2c37] flex flex-col px-8 py-5 rounded-sm absolute z-[1000]">
+      <h2 class="text-[#000112] dark:text-[#ffffff] text-xl">Add New Board</h2>
+      <form action="" class="flex flex-col" id="add-board-form">
+        <label for="title" class="text-[#828fa3] mt-[24px] mb-[8px] text-sm">Board Name</label>
+        <input type="text" name="title" placeholder="e.g.Web Design" minlength="5" maxlength="30"
+        class="title px-4 py-2 text-sm rounded-sm bg-[#ffffff] dark:bg-[#2b2c37] border-[1.9px] border-[#828fa3] border-opacity-20 text-[#000112] dark:text-[#ffffff] cursor-pointer hover:border-[#635fcf] capitalize">
+        <!--<label for="title" class="text-[#828fa3] mt-[24px] mb-[8px] text-sm">Board Columns</label>
+        <div id="addcolumn-div">
+          <div class="flex justify-between items-center">
+            <input id="sub-task" type="text" name="subtasks" placeholder="e.g.Todo" minlength="5" maxlength="30" class="sub-task px-4 py-2 text-sm rounded-sm bg-[#ffffff] dark:bg-[#2b2c37] border-[1.9px] border-[#828fa3] border-opacity-20 text-[#000112] dark:text-[#ffffff] w-full cursor-pointer hover:border-[#635fcf]">
+            <i class="fa-solid fa-xmark ml-3 cursor-pointer" style="color: #828fa3; font-size: x-large;"></i>
+          </div>
+        </div>
+        <button id="column" class="column-btn bg-[#ffffff] text-[#635fcf] mt-[24px] py-2 rounded-full text-sm">+Add New
+        column</button>-->
+      </form>
+      <button id="create-board-btn"
+        class="bg-[#635fcf] text-[#ffffff] mt-[24px] mb-[8px] py-2 rounded-full hover:opacity-50 text-sm">Create Board</button>
+    </div>
+  </section>
+
+
+  <!-- SIDE OPEN BUTTON -->
+
+  <div id="side-open-btn" class="bg-[#635fcf] absolute py-4 px-4 hover:opacity-50 cursor-pointer">
+    <i class="fa-solid fa-eye" style="color: #ffffff;"></i>
+  </div>
+
+
+  <!--HEADER -->
+
+  <header id="navbar" class="bg-[#ffffff] dark:bg-[#2b2c37] sticky top-0 z-10 border-b-[1.8px] border-[#828fa3] border-opacity-20">
+    <section class="flex justify-between items-center px-6">
+      <div class="logo">
+        <img src="./img/kanban-logo.svg" alt="">
+      </div>
+      <div class="ml-2 title flex items-center">
+        <h1 id="title" class="text-[#000112] dark:text-[#ffffff] text-2xl capitalize"></h1>
+        <div class="hidden">
+          <i class="fa-solid fa-angle-down ml-2" style="color: #635fcf; font-size: small;"></i>
+        </div>
+      </div>
+      <div>
+        <button id="add-btn" class="bg-[#635fcf] text-[#ffffff] px-6 py-3 rounded-full hover:opacity-50">+Add New Task</button>
+        <i id="dot-btn" class="fa-solid fa-ellipsis-vertical ml-5 cursor-pointer" style="color: #828fa3; font-size: x-large;"></i>
+      </div>
+    </section>
+  
+    <div id="dot-menu" class="bg-[#ffffff] dark:bg-[#20212c] rounded-md shadow-sm shadow-[#297ca5] py-2 text-sm font-normal w-[15%] absolute z-[1000] right-[2%] hidden">
+      <ul>
+        <li class="text-[#828fa3] my-2 cursor-pointer hover:bg-[#63cfcf] hover:bg-opacity-20 px-3 py-1">Edit Board</li>
+        <li class="text-red-500 my-2 cursor-pointer hover:bg-[#63cfcf] hover:bg-opacity-20 px-3 py-1">Delete Board</li>
+      </ul>
+    </div>
+    </header>
+
+
+  <!-- ADD NEW TASKS -->
+
+  <section id="add-task-container" class=" absolute z-[1000] hidden">
+    <div id="add-task" class="bg-[#ffffff] dark:bg-[#2b2c37] flex flex-col px-8 py-5 absolute rounded-md">
+      <div class="add-task-div">
+        <h2 class="text-[#000112] dark:text-[#ffffff] text-xl">Add New Task</h2>
+        <form id="add-task-form" action="" class="flex flex-col">
+          <label for="title" class="text-[#828fa3] mt-[24px] mb-[8px] text-sm">Title</label>
+          <input id="task-title" type="text" placeholder="e.g.Take coffee break" minlength="5" maxlength="30"
+          class="px-4 py-2 rounded-sm bg-[#ffffff] dark:bg-[#2b2c37] border-[1.9px] border-[#828fa3] border-opacity-20 text-[#000112] dark:text-[#ffffff] cursor-pointer hover:border-[#635fcf] w-full h-10 text-sm opacity-50">
+          <label for="desc" class="text-[#828fa3] mt-[24px] mb-[8px] text-sm">Description</label>
+          <textarea id="desc-input" cols="30" rows="5"
+          placeholder="e.g.It's always good to take a break. This 15 minutes break will recharge the batteries a little"
+          class="description  w-full h-28 text-[#000112] dark:text-[#ffffff] bg-[#ffffff] dark:bg-[#2b2c37] border-[1.9px] border-[#828fa3] border-opacity-20 px-4 py-2 rounded-sm cursor-pointer hover:border-[#635fcf] text-sm"></textarea>
+          <label for="subtasks" class="text-[#828fa3] mt-[24px] mb-[8px] text-sm">Subtasks</label>
+          <div id="subtask-div">
+            <div class="flex justify-between items-center subtask">
+              <input id="sub-task" type="text" placeholder="e.g.Make Coffee" minlength="5" maxlength="30"
+              class="px-4 py-2 rounded-sm bg-[#ffffff] dark:bg-[#2b2c37] border-[1.9px] border-[#828fa3] border-opacity-20 text-[#000112] dark:text-[#ffffff]  w-full h-10 cursor-pointer hover:border-[#635fcf] text-sm">
+              <i class="fa-solid fa-xmark ml-3 cursor-pointer" style="color: #828fa3; font-size: x-large;"></i>
+            </div>
+          </div>
+          <button id="subtask-btn" class="subtask-btn bg-[#ffffff] text-[#635fcf] mt-[24px] py-2 rounded-full text-sm">+Add New
+          Subtask</button>
+          <label for="status" class="text-[#828fa3] mt-[24px] mb-[8px] text-sm">Status</label>
+          <div id="status-btn-one"
+          class="px-4 py-2 rounded-sm bg-[#ffffff] dark:bg-[#2b2c37] border-[1.9px] border-[#828fa3] border-opacity-20 text-[#000112] dark:text-[#ffffff] flex justify-between items-center cursor-pointer hover:border-[#635fcf]  w-full h-10 text-sm">
+            <p></p>
+            <div class="">
+              <i class="fa-solid fa-angle-down" style="color: #635fcf; font-size: large;"></i>
+            </div>
+          </div>
+          <section id="status-menu" class="relative z-[1000] text-sm text-[#828fa3] hidden">
+            <div
+            class="bg-[#ffffff] dark:bg-[#2b2c37] absolute w-full top-1 rounded-sm border-[1.8px] border-[#828fa3] border-opacity-20 py-1 text-[#828fa3]">
+              <ul>
+                <li class="px-4 py-2 hover:bg-[#63cfcf] hover:bg-opacity-20 cursor-pointer">Todo</li>
+                <li class="px-4 py-2 hover:bg-[#63cfcf] hover:bg-opacity-20 cursor-pointer">Doing</li>
+                <li class="px-4 py-2 hover:bg-[#63cfcf] hover:bg-opacity-20 cursor-pointer">Done</li>
+              </ul>
+            </div>
+          </section>
+          <button id="create-task-btn" class="bg-[#635fcf] text-[#ffffff] mt-[24px] mb-[8px] py-2 rounded-full hover:opacity-50 text-sm">Create
+          Task</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+
+ <!-- CREATED TASKS -->
+
+ <!--<main id="task-board" class="bg-[#f4f7fd] dark:bg-[#20212c] flex items-start gap-6 p-6 h-full overflow-scroll min-w-full">
+  <section class="w-[17.5rem] shrink-0" id="section-one">
+   <div id="div-one" class="flex items-center">
+    <div class="bg-[#49c4e5] w-4 h-4 rounded-full mr-2"></div>
+    <h3 class="text-[#828fa3] text-sm tracking-[0.3em]">TODO (3)</h3>
+   </div>
+   <ul id="task-list-one" class="flex flex-col mt-4 gap-y-4 cursor-pointer">
+    <li id="task" class="bg-[#ffffff] dark:bg-[#2b2c37] w-full px-4 py-5 rounded-md shadow-sm shadow-[#297ca5]">
+     <h4 id="task-title" class="text-[#000112] dark:text-[#ffffff] hover:text-[#635fcf]">Build UI for onboarding flow</h4>
+     <p class="text-[#828fa3] text-sm">0 of 0 subtasks</p>
+    </li>
+    <li id="task" class="bg-[#ffffff] dark:bg-[#2b2c37] w-full px-4 py-5 rounded-md shadow-sm shadow-[#297ca5]">
+     <h4 id="task-title" class="text-[#000112] dark:text-[#ffffff] hover:text-[#635fcf]">Build UI for search</h4>
+     <p class="text-[#828fa3] text-sm">0 of 0 subtasks</p>
+    </li>
+    <li id="task" class="bg-[#ffffff] dark:bg-[#2b2c37] w-full px-4 py-5 rounded-md shadow-sm shadow-[#297ca5]">
+     <h4 id="task-title" class="text-[#000112] dark:text-[#ffffff] hover:text-[#635fcf]">Build settings UI</h4>
+     <p class="text-[#828fa3] text-sm">0 of 0 subtasks</p>
+    </li>
+   </ul>
+  </section>
+  <section id="section-two" class="w-[17.5rem] shrink-0">
+   <div id="div-two" class="flex items-center">
+    <div class="bg-[#8471f2] w-4 h-4 rounded-full mr-2"></div>
+    <h3 class="text-[#828fa3] text-sm tracking-[0.3em]">DOING (3)</h3>
+   </div>
+   <ul id="task-list-two" class="flex flex-col mt-4 gap-y-4 cursor-pointer">
+    <li id="task" class="bg-[#ffffff] dark:bg-[#2b2c37] w-full px-4 py-5 rounded-md shadow-sm shadow-[#297ca5]">
+     <h4 id="task-title" class="text-[#000112] dark:text-[#ffffff] hover:text-[#635fcf]">Design onboarding flow</h4>
+     <p class="text-[#828fa3] text-sm">0 of 0 subtasks</p>
+    </li>
+    <li id="task" class="bg-[#ffffff] dark:bg-[#2b2c37] w-full px-4 py-5 rounded-md shadow-sm shadow-[#297ca5]">
+     <h4 id="task-title" class="text-[#000112] dark:text-[#ffffff] hover:text-[#635fcf]">Add search enpoints</h4>
+     <p class="text-[#828fa3] text-sm">0 of 0 subtasks</p>
+    </li>
+    <li id="task" class="bg-[#ffffff] dark:bg-[#2b2c37] w-full px-4 py-5 rounded-md shadow-sm shadow-[#297ca5]">
+     <h4 id="task-title" class="text-[#000112] dark:text-[#ffffff] hover:text-[#635fcf]">Add authentication endpoints</h4>
+     <p class="text-[#828fa3] text-sm">0 of 0 subtasks</p>
+    </li>
+   </ul>
+  </section>
+  <section id="section-three" class="w-[17.5rem] shrink-0">
+   <div id="div-three" class="flex items-center">
+    <div class="bg-[#67e2ae] w-4 h-4 rounded-full mr-2"></div>
+    <h3 class="text-[#828fa3] text-sm tracking-[0.3em]">DONE (3)</h3>
+   </div>
+   <ul id="task-list-three" class="flex flex-col mt-4 gap-y-4 cursor-pointer">
+    <li id="task" class="bg-[#ffffff] dark:bg-[#2b2c37] w-full px-4 py-5 rounded-md shadow-sm shadow-[#297ca5]">
+     <h4 id="task-title" class="text-[#000112] dark:text-[#ffffff] hover:text-[#635fcf]">Conduct 5 wireframes tests</h4>
+     <p class="text-[#828fa3] text-sm">0 of 0 subtasks</p>
+    </li>
+    <li id="task" class="bg-[#ffffff] dark:bg-[#2b2c37] w-full px-4 py-5 rounded-md shadow-sm shadow-[#297ca5]">
+     <h4 id="task-title" class="text-[#000112] dark:text-[#ffffff] hover:text-[#635fcf]">Create wireframe prototype</h4>
+     <p class="text-[#828fa3] text-sm">0 of 0 subtasks</p>
+    </li>
+    <li id="task" class="bg-[#ffffff] dark:bg-[#2b2c37] w-full px-4 py-5 rounded-md shadow-sm shadow-[#297ca5]">
+     <h4 id="task-title" class="text-[#000112] dark:text-[#ffffff] hover:text-[#635fcf]">Review results of usability tests and
+     iterate</h4>
+     <p class="text-[#828fa3] text-sm">0 of 0 subtasks</p>
+    </li>
+   </ul>
+  </section>
+  <div class="shrink-0 w-[17.5rem] h-[400px] my-10 bg-[#ffffff] dark:bg-[#161822] rounded-sm">
+   <button id="new-column-btn" class="text-[#828fa3] text-2xl h-full w-full hover:text-[#635fcf]">+New Column</button>
+  </div>
+ </main>-->
+
+
+  <!-- TASK DETAILS -->
+
+  <section id="task-details-container" class="absolute z-[1000] hidden">
+    <div id="task-details" class="text-[#000112] dark:text-[#ffffff] p-8 bg-[#ffffff] dark:bg-[#2b2c37] rounded-md absolute z-[1000]">
+      <div class="flex justify-between">
+        <h2 id="title" class="text-xl">Build settings UI</h2>
+        <i id="dot-board-btn" class="fa-solid fa-ellipsis-vertical cursor-pointer"
+        style="color: #828fa3; font-size: x-large;"></i>
+      </div>
+      <div>
+        <p id="description" class="mt-[24px] text-sm font-normal text-[#828fa3]">I love you</p>
+      </div>
+      <div class="mt-[24px]">
+        <label for="subtasks" class="text-[#828fa3] text-sm">Subtasks (0 of 0)</label>
+      </div>
+      <div class="px-4 py-2 rounded-sm bg-[#f4f7fd] dark:bg-[#20212c] mt-4 cursor-pointer hover:bg-[#63cfcf] hover:bg-opacity-20 flex">
+        <input type="checkbox" name="subtask" value="subtask" class="mr-2"><p class="text-sm ml-2"></p>
+      </div>
+      <!--<div class="px-4 py-2 rounded-sm bg-[#f4f7fd] dark:bg-[#20212c] mt-2 cursor-pointer hover:bg-[#63cfcf] hover:bg-opacity-20 flex">
+        <input type="checkbox" name="subtask" value="subtask" class="mr-2"><p class="text-sm ml-2"></p>
+      </div>-->
+      <div>
+        <div class="mt-[24px]">
+          <label for="status" class="text-[#828fa3] text-sm">Current Status</label>
+        </div>
+        <div id="btn-two"
+        class="flex justify-between px-4 py-2 text-sm rounded-sm bg-[#ffffff] dark:bg-[#2b2c37] border-[1.9px] border-[#828fa3] border-opacity-20 mt-2 hover:border-[#635fcf] cursor-pointer">
+          <p>Todo</p>
+          <div class="">
+            <i class="fa-solid fa-angle-down" style="color: #635fcf; font-size: large;"></i>
+          </div>
+        </div>
+        <section id="status-menu-two" class="relative z-[1000] text-sm hidden">
+          <div class="bg-[#ffffff] dark:bg-[#2b2c37] absolute w-full top-1 rounded-sm border-[1.8px] border-[#828fa3] border-opacity-20 py-1 text-[#828fa3]">
+            <ul>
+              <li class="px-4 py-2 hover:bg-[#63cfcf] hover:bg-opacity-20 cursor-pointer">Todo</li>
+              <li class="px-4 py-2 hover:bg-[#63cfcf] hover:bg-opacity-20 cursor-pointer">Doing</li>
+              <li class="px-4 py-2 hover:bg-[#63cfcf] hover:bg-opacity-20 cursor-pointer">Done</li>
+            </ul>
+          </div>
+        </section>
+        <div id="dot-board"
+          class="bg-[#ffffff] dark:bg-[#20212c] rounded-md shadow-sm shadow-[#297ca5] py-2 text-sm font-normal w-1/3 absolute z-[1000] hidden">
+          <ul>
+            <li class="text-[#828fa3] my-2 cursor-pointer hover:bg-[#63cfcf] hover:bg-opacity-20 px-3 py-1">Edit Board</li>
+            <li class="text-red-500 my-2 cursor-pointer hover:bg-[#63cfcf] hover:bg-opacity-20 px-3 py-1">Delete Board</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
